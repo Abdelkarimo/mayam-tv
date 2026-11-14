@@ -38,15 +38,18 @@ window.Prayer = (function(){
     if(hint && nextIdx>=0) hint.textContent='الصلاة القادمة: '+NAMES[ORDER[nextIdx]]+' '+to12(timings[ORDER[nextIdx]]);
   }
 
+  function avatar(m){ if(window.Avatar && window.ROUTER && window.ROUTER.current()==='prayer') Avatar.setMood(m); }
+
   function load(){
+    avatar('think');
     const url=`https://api.aladhan.com/v1/timings/${fmtDate(new Date())}?latitude=${LAT}&longitude=${LNG}&method=${METHOD}`;
     fetch(url).then(r=>r.json()).then(j=>{
       if(j && j.data && j.data.timings){
-        timings=j.data.timings; cache({date:fmtDate(new Date()), timings}); render();
+        timings=j.data.timings; cache({date:fmtDate(new Date()), timings}); render(); avatar('dua');
       } else throw new Error('bad');
     }).catch(()=>{
       const c=readCache();
-      if(c && c.timings){ timings=c.timings; render();
+      if(c && c.timings){ timings=c.timings; render(); avatar('dua');
         document.getElementById('prayer-status').textContent='(المواقيت من آخر تحميل — تأكد من اتصال الإنترنت لتحديثها)';
       } else {
         document.getElementById('prayer-status').textContent='تعذّر تحميل المواقيت. تأكد من اتصال الشاشة بالإنترنت.';

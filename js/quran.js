@@ -19,6 +19,7 @@ window.Quran = (function(){
     stop();
     document.getElementById('surah-title').textContent='جارٍ التحميل…';
     document.getElementById('ayah-list').innerHTML='';
+    if(window.Avatar) Avatar.setMood('think');
     fetch(`${API}/surah/${n}/ar.alafasy`).then(r=>r.json()).then(j=>{
       if(!j.data) throw new Error('bad');
       current=j.data; ayahs=j.data.ayahs;
@@ -26,9 +27,11 @@ window.Quran = (function(){
       const html=ayahs.map((a,i)=>
         `<span class="ayah" id="ayah-${i}">${a.text} <span class="anum">${a.numberInSurah}</span> </span>`).join('');
       document.getElementById('ayah-list').innerHTML=html;
+      if(window.Avatar) Avatar.setMood('read');
     }).catch(()=>{
       document.getElementById('surah-title').textContent='تعذّر التحميل';
       document.getElementById('ayah-list').innerHTML='<p class="status">تأكد من اتصال الشاشة بالإنترنت.</p>';
+      if(window.Avatar) Avatar.setMood('read');
     });
   }
 

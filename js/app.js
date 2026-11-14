@@ -2,6 +2,15 @@
 (function(){
   const screens = ['home','quran','prayer','adhkar','screensaver'];
   const MOOD = { home:'home', quran:'quran', prayer:'prayer', adhkar:'dhikr', screensaver:'sleep' };
+  // عرض حركات مريم على الرئيسية: بتلفّ على كل الـ12 شكل، كل شكل 5 ثواني (دقيقة كاملة للدورة)
+  const HOME_POSES = ['wave','love','point','twirl','cheer','stand'];
+  let homeTimer = null, hp = 0;
+  function posesList(){ return (window.Avatar && Avatar.POSES && Avatar.POSES.length) ? Avatar.POSES : HOME_POSES; }
+  function startHomeShow(){
+    stopHomeShow(); const P = posesList(); hp = 0; Avatar.setMood(P[0]);
+    homeTimer = setInterval(()=>{ hp = (hp+1) % P.length; Avatar.setMood(P[hp]); }, 5000);
+  }
+  function stopHomeShow(){ if(homeTimer){ clearInterval(homeTimer); homeTimer = null; } }
   let stack = ['home'];
 
   function show(id){
@@ -12,7 +21,8 @@
     if(id==='screensaver') Screensaver.start(); else Screensaver.stop();
     if(id==='quran') Quran.onEnter();
     if(id==='prayer') Prayer.onEnter();
-    Avatar.setMood(MOOD[id]||'home');
+    if(id!=='adhkar' && window.Adhkar && Adhkar.stop) Adhkar.stop();
+    if(id==='home'){ startHomeShow(); } else { stopHomeShow(); Avatar.setMood(MOOD[id]||'home'); }
     if(id==='adhkar') Adhkar.onEnter();
     setTimeout(()=>window.NAV.focusFirst(), 60);
   }

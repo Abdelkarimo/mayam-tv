@@ -170,17 +170,30 @@
     if(host && host.classList){ host.classList.remove('av-pop'); void host.offsetWidth; host.classList.add('av-pop'); }
   }
 
+  function applyAll(mood){
+    document.querySelectorAll('[data-avatar]').forEach(el=>{
+      const fixed = el.getAttribute('data-avatar-fixed');
+      const s = el.querySelector('svg'); if(s) apply(s, fixed || mood);
+    });
+  }
+  let reactTimer = null;
+
   root.Avatar = {
     LOOK, MOODS, POSES, svg: build,
     mountAll(){ document.querySelectorAll('[data-avatar]').forEach(el=>{
       el.innerHTML = build(el.getAttribute('data-avatar-fixed') || current); }); },
     setMood(mood){
+      if(reactTimer){ clearTimeout(reactTimer); reactTimer=null; }
       if(!MOODS[mood]) mood='home';
       current = mood;
-      document.querySelectorAll('[data-avatar]').forEach(el=>{
-        const fixed = el.getAttribute('data-avatar-fixed');
-        const s = el.querySelector('svg'); if(s) apply(s, fixed || mood);
-      });
+      applyAll(mood);
+    },
+    // حركة مؤقتة (تفاعل) ترجع بعدها لمود الشاشة الأساسي
+    react(mood, ms){
+      if(!MOODS[mood]) return;
+      applyAll(mood);
+      if(reactTimer) clearTimeout(reactTimer);
+      reactTimer = setTimeout(()=>{ reactTimer=null; applyAll(current); }, ms||1500);
     },
     mood(){ return current; }
   };

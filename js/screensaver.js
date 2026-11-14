@@ -2,6 +2,19 @@
 window.Screensaver = (function(){
   const IDLE_MS=120000; // دقيقتان خمول
   let ayahTimer=null, photoTimer=null, lastActivity=Date.now(), ai=0, pi=0, running=false;
+  // أفاتار كبير يبدّل كل الـ12 شكل، كل شكل 5 ثواني
+  let moodTimer=null, mi=0;
+  const BAQARA='https://server8.mp3quran.net/afs/002.mp3'; // سورة البقرة — مشاري العفاسي
+  function startAvatarCycle(){
+    stopAvatarCycle();
+    const P=(window.Avatar && Avatar.POSES && Avatar.POSES.length)?Avatar.POSES:['sleep'];
+    mi=0; if(window.Avatar) Avatar.setMood(P[0]);
+    moodTimer=setInterval(()=>{ mi=(mi+1)%P.length; if(window.Avatar) Avatar.setMood(P[mi]); }, 5000);
+  }
+  function stopAvatarCycle(){ if(moodTimer){ clearInterval(moodTimer); moodTimer=null; } }
+  function playBaqara(){ const a=document.getElementById('saver-audio'); if(!a) return;
+    try{ if(a.getAttribute('src')!==BAQARA) a.src=BAQARA; a.play().catch(()=>{}); }catch(e){} }
+  function stopBaqara(){ const a=document.getElementById('saver-audio'); if(!a) return; try{ a.pause(); }catch(e){} }
 
   function showAyah(){
     const a=window.AYAT[ai % window.AYAT.length]; ai++;
@@ -27,10 +40,14 @@ window.Screensaver = (function(){
       showAyah(); showPhoto();
       ayahTimer=setInterval(showAyah, 12000);
       photoTimer=setInterval(showPhoto, 15000);
+      startAvatarCycle();
+      playBaqara();
     },
     stop(){
       running=false;
       clearInterval(ayahTimer); clearInterval(photoTimer);
+      stopAvatarCycle();
+      stopBaqara();
     },
     resetIdle(){ lastActivity=Date.now(); },
     maybeAutoStart(){

@@ -35,7 +35,7 @@
     if([KEY.LEFT,KEY.UP,KEY.RIGHT,KEY.DOWN].includes(k)){ e.preventDefault(); move(k); return; }
     if(k===KEY.ENTER){
       const el=document.activeElement;
-      if(el && (el.hasAttribute('data-nav')||el.hasAttribute('data-back')||el.classList.contains('surah-item')||el.classList.contains('adhkar-tab'))){
+      if(el && (el.hasAttribute('data-nav')||el.hasAttribute('data-back')||el.classList.contains('surah-item')||el.classList.contains('adhkar-tab')||el.classList.contains('dhikr'))){
         e.preventDefault(); el.click();
       }
       return;
