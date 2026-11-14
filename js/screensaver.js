@@ -14,11 +14,22 @@ window.Screensaver = (function(){
   function stopAvatarCycle(){ if(moodTimer){ clearInterval(moodTimer); moodTimer=null; } }
 
   // ===== تلاوة البقرة (أوفلاين) مع سينك النص =====
-  let ayat=[], qi=0, loaded=false;
-  function loadBaqara(){
-    if(loaded || ayat.length) return;
-    fetch('assets/quran/baqarah.json').then(r=>r.json()).then(j=>{ ayat=j||[]; loaded=true; }).catch(()=>{ ayat=[]; });
+  let ayat=[], qi=0;
+  // البيانات محمّلة كـ global من assets/quran/baqarah.js (fetch مبيشتغلش مع الملفات المحلية على التلفزيون)
+  function loadBaqara(){ if(!ayat.length) ayat = (window.BAQARA||[]).slice(); }
+
+  // احتياطي: لو بيانات البقرة مش موجودة، نعرض آيات نصية بدون صوت
+  let fbTimer=null, fi=0;
+  function startTextFallback(){
+    stopTextFallback();
+    const list = window.AYAT || [];
+    const tick=()=>{ if(!list.length) return; const a=list[fi%list.length]; fi++;
+      const el=document.getElementById('saver-ayah'); const rf=document.getElementById('saver-ref');
+      if(el){ el.style.opacity=0; setTimeout(()=>{ el.textContent=a.t; el.style.opacity=1; }, 200); }
+      if(rf) rf.textContent=a.r||''; };
+    tick(); fbTimer=setInterval(tick, 12000);
   }
+  function stopTextFallback(){ if(fbTimer){ clearInterval(fbTimer); fbTimer=null; } }
   const audioEl=()=>document.getElementById('saver-audio');
   function showAyah(i){
     if(!ayat.length) return;
@@ -60,13 +71,14 @@ window.Screensaver = (function(){
       loadBaqara();
       startAvatarCycle();
       showPhoto(); photoTimer=setInterval(showPhoto, 15000);
-      // ابدأ التلاوة من مكان ما وقفت (تستنى تحميل البيانات لو لسه)
-      (function begin(){ if(!running) return; if(ayat.length) playAyah(qi); else setTimeout(begin, 300); })();
+      if(ayat.length){ playAyah(qi); }   // تلاوة البقرة أوفلاين مع سينك النص
+      else { startTextFallback(); }       // احتياطي بدون صوت
     },
     stop(){
       running=false;
       clearInterval(photoTimer);
       stopAvatarCycle();
+      stopTextFallback();
       const au=audioEl(); if(au){ try{ au.pause(); }catch(e){} }
     },
     resetIdle(){ lastActivity=Date.now(); },
