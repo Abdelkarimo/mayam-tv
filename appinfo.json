@@ -1,0 +1,14 @@
+{
+  "id": "com.abdelkarim.maryamtv",
+  "version": "1.0.0",
+  "vendor": "Abdelkarim",
+  "type": "web",
+  "main": "index.html",
+  "title": "Maryam TV",
+  "icon": "icon.png",
+  "largeIcon": "largeIcon.png",
+  "iconColor": "green",
+  "bgColor": "#0b3d2e",
+  "disableBackHistoryAPI": true,
+  "supportTouchMode": "none"
+}

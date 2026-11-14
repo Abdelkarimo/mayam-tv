@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920, initial-scale=1">
+  <title>Maryam TV</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- الشاشة الرئيسية -->
+  <div id="home" class="screen active">
+    <header class="home-header">
+      <div class="brand">مريم</div>
+      <div id="clock" class="clock"></div>
+    </header>
+    <nav class="tiles" id="tiles">
+      <button class="tile" data-target="quran" data-nav>
+        <span class="tile-icon">📖</span>
+        <span class="tile-label">القرآن الكريم</span>
+      </button>
+      <button class="tile" data-target="prayer" data-nav>
+        <span class="tile-icon">🕌</span>
+        <span class="tile-label">مواقيت الصلاة</span>
+      </button>
+      <button class="tile" data-target="adhkar" data-nav>
+        <span class="tile-icon">📿</span>
+        <span class="tile-label">الأذكار</span>
+      </button>
+      <button class="tile" data-target="qibla" data-nav>
+        <span class="tile-icon">🧭</span>
+        <span class="tile-label">اتجاه القبلة</span>
+      </button>
+      <button class="tile" data-target="screensaver" data-nav>
+        <span class="tile-icon">🖼️</span>
+        <span class="tile-label">شاشة التوقف</span>
+      </button>
+    </nav>
+    <footer class="home-footer">
+      <span id="next-prayer-hint"></span>
+    </footer>
+  </div>
+
+  <!-- القرآن -->
+  <section id="quran" class="screen page">
+    <div class="page-head">
+      <button class="back" data-back>‹ رجوع</button>
+      <h1>القرآن الكريم</h1>
+    </div>
+    <div class="quran-layout">
+      <div class="surah-list" id="surah-list"></div>
+      <div class="surah-view">
+        <div class="surah-toolbar">
+          <span id="surah-title" class="surah-title"></span>
+          <button id="play-surah" class="btn" data-nav>▶ تشغيل التلاوة</button>
+        </div>
+        <div id="ayah-list" class="ayah-list"></div>
+      </div>
+    </div>
+    <audio id="quran-audio"></audio>
+  </section>
+
+  <!-- مواقيت الصلاة -->
+  <section id="prayer" class="screen page">
+    <div class="page-head">
+      <button class="back" data-back>‹ رجوع</button>
+      <h1>مواقيت الصلاة — القاهرة</h1>
+    </div>
+    <div id="prayer-date" class="prayer-date"></div>
+    <div id="prayer-times" class="prayer-times"></div>
+    <div id="prayer-status" class="status"></div>
+  </section>
+
+  <!-- الأذكار -->
+  <section id="adhkar" class="screen page">
+    <div class="page-head">
+      <button class="back" data-back>‹ رجوع</button>
+      <h1>الأذكار</h1>
+    </div>
+    <div class="adhkar-tabs" id="adhkar-tabs"></div>
+    <div class="adhkar-body" id="adhkar-body"></div>
+  </section>
+
+  <!-- القبلة -->
+  <section id="qibla" class="screen page">
+    <div class="page-head">
+      <button class="back" data-back>‹ رجوع</button>
+      <h1>اتجاه القبلة</h1>
+    </div>
+    <div class="qibla-wrap">
+      <div class="compass">
+        <div class="compass-rose"></div>
+        <div id="qibla-needle" class="needle"></div>
+        <div class="kaaba">🕋</div>
+      </div>
+      <div id="qibla-info" class="qibla-info"></div>
+    </div>
+  </section>
+
+  <!-- شاشة التوقف -->
+  <section id="screensaver" class="screen saver">
+    <div class="saver-photo" id="saver-photo"></div>
+    <div class="saver-overlay">
+      <div id="saver-ayah" class="saver-ayah"></div>
+      <div id="saver-ref" class="saver-ref"></div>
+    </div>
+    <button class="saver-exit" data-back>خروج ✕</button>
+  </section>
+
+  <script src="js/data-ayat.js"></script>
+  <script src="js/adhkar-data.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/prayer.js"></script>
+  <script src="js/quran.js"></script>
+  <script src="js/adhkar.js"></script>
+  <script src="js/qibla.js"></script>
+  <script src="js/screensaver.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
