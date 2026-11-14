@@ -10,7 +10,7 @@
   <!-- الشاشة الرئيسية -->
   <div id="home" class="screen active">
     <header class="home-header">
-      <div class="brand">مريم</div>
+      <div class="brand"><div class="brand-avatar" data-avatar></div><span>مريم</span></div>
       <div id="clock" class="clock"></div>
     </header>
     <nav class="tiles" id="tiles">
@@ -23,15 +23,11 @@
         <span class="tile-label">مواقيت الصلاة</span>
       </button>
       <button class="tile" data-target="adhkar" data-nav>
-        <span class="tile-icon">📿</span>
+        <span class="tile-icon">🤲</span>
         <span class="tile-label">الأذكار</span>
       </button>
-      <button class="tile" data-target="qibla" data-nav>
-        <span class="tile-icon">🧭</span>
-        <span class="tile-label">اتجاه القبلة</span>
-      </button>
       <button class="tile" data-target="screensaver" data-nav>
-        <span class="tile-icon">🖼️</span>
+        <span class="tile-icon">🌙</span>
         <span class="tile-label">شاشة التوقف</span>
       </button>
     </nav>
@@ -45,6 +41,7 @@
     <div class="page-head">
       <button class="back" data-back>‹ رجوع</button>
       <h1>القرآن الكريم</h1>
+      <div class="head-avatar" data-avatar></div>
     </div>
     <div class="quran-layout">
       <div class="surah-list" id="surah-list"></div>
@@ -64,6 +61,7 @@
     <div class="page-head">
       <button class="back" data-back>‹ رجوع</button>
       <h1>مواقيت الصلاة — القاهرة</h1>
+      <div class="head-avatar" data-avatar></div>
     </div>
     <div id="prayer-date" class="prayer-date"></div>
     <div id="prayer-times" class="prayer-times"></div>
@@ -75,25 +73,10 @@
     <div class="page-head">
       <button class="back" data-back>‹ رجوع</button>
       <h1>الأذكار</h1>
+      <div class="head-avatar" data-avatar></div>
     </div>
     <div class="adhkar-tabs" id="adhkar-tabs"></div>
     <div class="adhkar-body" id="adhkar-body"></div>
-  </section>
-
-  <!-- القبلة -->
-  <section id="qibla" class="screen page">
-    <div class="page-head">
-      <button class="back" data-back>‹ رجوع</button>
-      <h1>اتجاه القبلة</h1>
-    </div>
-    <div class="qibla-wrap">
-      <div class="compass">
-        <div class="compass-rose"></div>
-        <div id="qibla-needle" class="needle"></div>
-        <div class="kaaba">🕋</div>
-      </div>
-      <div id="qibla-info" class="qibla-info"></div>
-    </div>
   </section>
 
   <!-- شاشة التوقف -->
@@ -103,16 +86,17 @@
       <div id="saver-ayah" class="saver-ayah"></div>
       <div id="saver-ref" class="saver-ref"></div>
     </div>
+    <div class="saver-avatar" data-avatar data-avatar-fixed="sleep"></div>
     <button class="saver-exit" data-back>خروج ✕</button>
   </section>
 
   <script src="js/data-ayat.js"></script>
   <script src="js/adhkar-data.js"></script>
+  <script src="js/avatar.js"></script>
   <script src="js/nav.js"></script>
   <script src="js/prayer.js"></script>
   <script src="js/quran.js"></script>
   <script src="js/adhkar.js"></script>
-  <script src="js/qibla.js"></script>
   <script src="js/screensaver.js"></script>
   <script src="js/app.js"></script>
 </body>

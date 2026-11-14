@@ -4,7 +4,7 @@
 
   function activeScreen(){ return document.querySelector('.screen.active'); }
   function focusables(scr){
-    return Array.from(scr.querySelectorAll('[data-nav],[data-back],button,.surah-item,.adhkar-tab'))
+    return Array.from(scr.querySelectorAll('[data-nav],[data-back],button,.surah-item,.adhkar-tab,.dhikr'))
       .filter(el => el.offsetParent !== null && !el.disabled);
   }
   function rect(el){ const r = el.getBoundingClientRect(); return {x:r.left+r.width/2, y:r.top+r.height/2, r}; }
@@ -27,7 +27,7 @@
       const score = primary + cross*2;
       if(score<bestScore){ bestScore=score; best=el; }
     });
-    if(best){ best.focus(); best.scrollIntoView({block:'nearest', inline:'nearest'}); }
+    if(best){ best.focus(); best.scrollIntoView({block: best.classList.contains('dhikr') ? 'center' : 'nearest', inline:'nearest'}); }
   }
 
   document.addEventListener('keydown', function(e){

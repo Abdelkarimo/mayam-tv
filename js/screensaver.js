@@ -15,7 +15,7 @@ window.Screensaver = (function(){
       ph.style.opacity=0;
       setTimeout(()=>{ ph.style.backgroundImage=`url("${window.PHOTOS[pi%window.PHOTOS.length]}")`; ph.style.opacity=1; pi++; }, 600);
     } else {
-      ph.style.backgroundImage='radial-gradient(circle at 50% 40%, #11543f, #04140d)';
+      ph.style.backgroundImage='radial-gradient(circle at 50% 30%, #6b4f9e, #2a1d45)';
       ph.style.opacity=1;
     }
   }

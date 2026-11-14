@@ -1,6 +1,7 @@
 // الراوتر الرئيسي + الساعة + التهيئة
 (function(){
-  const screens = ['home','quran','prayer','adhkar','qibla','screensaver'];
+  const screens = ['home','quran','prayer','adhkar','screensaver'];
+  const MOOD = { home:'home', quran:'quran', prayer:'prayer', adhkar:'dhikr', screensaver:'sleep' };
   let stack = ['home'];
 
   function show(id){
@@ -11,8 +12,8 @@
     if(id==='screensaver') Screensaver.start(); else Screensaver.stop();
     if(id==='quran') Quran.onEnter();
     if(id==='prayer') Prayer.onEnter();
+    Avatar.setMood(MOOD[id]||'home');
     if(id==='adhkar') Adhkar.onEnter();
-    if(id==='qibla') Qibla.onEnter();
     setTimeout(()=>window.NAV.focusFirst(), 60);
   }
   function go(id){ if(stack[stack.length-1]!==id) stack.push(id); show(id); }
@@ -41,6 +42,7 @@
   document.addEventListener('keydown', ()=>Screensaver.resetIdle());
 
   // تهيئة
-  Prayer.init(); Quran.init(); Adhkar.init(); Qibla.init(); Screensaver.init();
+  Avatar.mountAll();
+  Prayer.init(); Quran.init(); Adhkar.init(); Screensaver.init();
   show('home');
 })();
