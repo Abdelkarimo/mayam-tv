@@ -110,16 +110,18 @@ mayam-tv/
 1. فعّل **Developer Mode** على التلفزيون (يتطلب حساب LG Developer مجاني).
 2. ثبّت أدوات التطوير:
    ```bash
-   npm install -g @webosose/ares-cli
+   npm install -g @webos-tools/cli
    ```
 3. أضف الشاشة كجهاز هدف باستخدام الـ IP والـ passphrase من تطبيق Developer Mode:
    ```bash
-   ares-setup-device
+   ares-setup-device --add tv -i "host=<IP-التليفزيون>" -i "port=9922" -i "username=prisoner"
+   ares-novacom --device tv --getkey   # هيطلب الـ Passphrase
    ```
 4. حزّم التطبيق وثبّته:
    ```bash
-   ares-package .
-   ares-install ./com.abdelkarim.maryamtv_1.1.0_all.ipk -d <اسم-الجهاز>
+   ares-package . -e .git
+   ares-install --device tv com.abdelkarim.maryamtv_1.1.0_all.ipk
+   ares-launch --device tv com.abdelkarim.maryamtv
    ```
 
 ## البيانات الخارجية
