@@ -1,10 +1,10 @@
-// شاشة التوقف: آيات + صور (مع بدء تلقائي بعد الخمول)
+// شاشة التوقف: تلاوة سورة البقرة أوفلاين + آياتها تتظلّل مع الصوت + أفاتار كبير يبدّل الأشكال
 window.Screensaver = (function(){
   const IDLE_MS=120000; // دقيقتان خمول
-  let ayahTimer=null, photoTimer=null, lastActivity=Date.now(), ai=0, pi=0, running=false;
-  // أفاتار كبير يبدّل كل الـ12 شكل، كل شكل 5 ثواني
+  let photoTimer=null, lastActivity=Date.now(), pi=0, running=false;
+
+  // ===== أفاتار كبير يبدّل كل الـ12 شكل، كل شكل 5 ثواني =====
   let moodTimer=null, mi=0;
-  const BAQARA='https://server8.mp3quran.net/afs/002.mp3'; // سورة البقرة — مشاري العفاسي
   function startAvatarCycle(){
     stopAvatarCycle();
     const P=(window.Avatar && Avatar.POSES && Avatar.POSES.length)?Avatar.POSES:['sleep'];
@@ -12,16 +12,32 @@ window.Screensaver = (function(){
     moodTimer=setInterval(()=>{ mi=(mi+1)%P.length; if(window.Avatar) Avatar.setMood(P[mi]); }, 5000);
   }
   function stopAvatarCycle(){ if(moodTimer){ clearInterval(moodTimer); moodTimer=null; } }
-  function playBaqara(){ const a=document.getElementById('saver-audio'); if(!a) return;
-    try{ if(a.getAttribute('src')!==BAQARA) a.src=BAQARA; a.play().catch(()=>{}); }catch(e){} }
-  function stopBaqara(){ const a=document.getElementById('saver-audio'); if(!a) return; try{ a.pause(); }catch(e){} }
 
-  function showAyah(){
-    const a=window.AYAT[ai % window.AYAT.length]; ai++;
-    const el=document.getElementById('saver-ayah'); const rf=document.getElementById('saver-ref');
-    el.style.opacity=0;
-    setTimeout(()=>{ el.textContent=a.t; rf.textContent=a.r; el.style.opacity=1; }, 300);
+  // ===== تلاوة البقرة (أوفلاين) مع سينك النص =====
+  let ayat=[], qi=0, loaded=false;
+  function loadBaqara(){
+    if(loaded || ayat.length) return;
+    fetch('assets/quran/baqarah.json').then(r=>r.json()).then(j=>{ ayat=j||[]; loaded=true; }).catch(()=>{ ayat=[]; });
   }
+  const audioEl=()=>document.getElementById('saver-audio');
+  function showAyah(i){
+    if(!ayat.length) return;
+    const a=ayat[i]; const el=document.getElementById('saver-ayah'); const rf=document.getElementById('saver-ref');
+    if(el){ el.style.opacity=0; setTimeout(()=>{ el.textContent=a.t; el.style.opacity=1; }, 180); }
+    if(rf) rf.textContent='سورة البقرة — آية ' + a.n;
+  }
+  function playAyah(i){
+    if(!ayat.length) return;
+    qi=((i % ayat.length) + ayat.length) % ayat.length;
+    showAyah(qi);
+    const au=audioEl(); if(!au) return;
+    au.src='assets/quran/baqarah/' + ayat[qi].n + '.mp3';
+    const p=au.play(); if(p && p.catch) p.catch(()=>{});
+  }
+  function onEnded(){ if(running) playAyah(qi+1); }
+  function onError(){ if(running) setTimeout(()=>{ if(running) playAyah(qi+1); }, 500); }
+
+  // ===== صور الخلفية =====
   function showPhoto(){
     const ph=document.getElementById('saver-photo');
     if(window.PHOTOS && window.PHOTOS.length){
@@ -34,20 +50,24 @@ window.Screensaver = (function(){
   }
 
   return {
-    init(){},
+    init(){
+      loadBaqara();
+      const au=audioEl();
+      if(au){ au.loop=false; au.addEventListener('ended', onEnded); au.addEventListener('error', onError); }
+    },
     start(){
       if(running) return; running=true;
-      showAyah(); showPhoto();
-      ayahTimer=setInterval(showAyah, 12000);
-      photoTimer=setInterval(showPhoto, 15000);
+      loadBaqara();
       startAvatarCycle();
-      playBaqara();
+      showPhoto(); photoTimer=setInterval(showPhoto, 15000);
+      // ابدأ التلاوة من مكان ما وقفت (تستنى تحميل البيانات لو لسه)
+      (function begin(){ if(!running) return; if(ayat.length) playAyah(qi); else setTimeout(begin, 300); })();
     },
     stop(){
       running=false;
-      clearInterval(ayahTimer); clearInterval(photoTimer);
+      clearInterval(photoTimer);
       stopAvatarCycle();
-      stopBaqara();
+      const au=audioEl(); if(au){ try{ au.pause(); }catch(e){} }
     },
     resetIdle(){ lastActivity=Date.now(); },
     maybeAutoStart(){

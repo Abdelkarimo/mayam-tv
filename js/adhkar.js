@@ -1,18 +1,10 @@
 // عرض الأذكار بتبويبات — والأفاتار بيغيّر مودها مع كل تبويب
-// + مشغّل صوتي: تختار الذِّكر يتقل ويتقال بصوت، تكرّر وراه، وبعدين يتجاب اللي بعده
+// دليل بصري (بدون صوت): تختار الذِّكر يتقل ويتظلّل، ويظهر عدّاد ترديد، وبعد مهلة يتجاب اللي بعده
 window.Adhkar = (function(){
   let cats=[], cur=-1;
 
-  // ===== مشغّل الأذكار =====
+  // ===== الدليل البصري =====
   let idx=-1, rep=0, repTarget=1, timer=null, stopped=true;
-  const synth = window.speechSynthesis || null;
-  let arVoice=null;
-  function refreshVoice(){ if(!synth) return; try{
-    const vs=synth.getVoices()||[];
-    arVoice = vs.find(v=>/(^|[-_ ])ar([-_]|$)/i.test(v.lang||'')) || vs.find(v=>/arab/i.test(v.name||'')) || null;
-  }catch(e){} }
-  if(synth){ refreshVoice(); try{ synth.onvoiceschanged=refreshVoice; }catch(e){} }
-  const ttsOK = ()=> !!(synth && arVoice);
 
   function parseCount(s){ s=s||'';
     if(/مئة|مائة/.test(s)) return 100;
@@ -24,7 +16,8 @@ window.Adhkar = (function(){
     if(/مرتين/.test(s)) return 2;
     return 1;
   }
-  function clean(t){ return (t||'').replace(/●/g,'، ').replace(/[ۚۖۗۙۛۜ۟ۤ]/g,'').replace(/\s+/g,' ').trim(); }
+  function clean(t){ return (t||'').replace(/●/g,'، ').replace(/\s+/g,' ').trim(); }
+  function readDelay(text){ const n=clean(text).length; return Math.min(Math.max(n*55, 2800), 14000); }
   function nodes(){ return Array.from(document.querySelectorAll('#adhkar-body .dhikr')); }
   function clearPlaying(){ document.querySelectorAll('#adhkar-body .dhikr.playing').forEach(e=>e.classList.remove('playing')); }
   function clearReps(){ document.querySelectorAll('#adhkar-body .rep').forEach(b=>b.remove()); }
@@ -33,19 +26,6 @@ window.Adhkar = (function(){
     b.textContent = 'ردّد معايا  ' + n + ' / ' + total;
     b.style.animation='none'; void b.offsetWidth; b.style.animation='';
   }
-  function stopSpeak(){ try{ if(synth) synth.cancel(); }catch(e){} }
-
-  function speak(text, cb){
-    if(!ttsOK()){ timer=setTimeout(cb, 3400); return; } // لا يوجد صوت عربي: مهلة صامتة للترديد
-    try{
-      const u=new SpeechSynthesisUtterance(clean(text));
-      u.voice=arVoice; u.lang=arVoice.lang||'ar-SA'; u.rate=0.82; u.pitch=1.06;
-      u.onend=()=>cb&&cb();
-      u.onerror=()=>{ timer=setTimeout(cb, 600); };
-      synth.cancel(); synth.speak(u);
-    }catch(e){ timer=setTimeout(cb, 600); }
-  }
-
   function keepAwake(){ if(window.Screensaver && Screensaver.resetIdle) Screensaver.resetIdle(); }
 
   function playIndex(i){
@@ -65,18 +45,16 @@ window.Adhkar = (function(){
     keepAwake();
     rep++; setCounter(el, rep, repTarget);
     const item = (cats[cur] && cats[cur].items) ? cats[cur].items[idx] : null;
-    speak(item ? item.text : el.textContent, ()=>{
+    const text = item ? item.text : el.textContent;
+    timer=setTimeout(()=>{
       if(stopped) return;
       keepAwake();
-      timer=setTimeout(()=>{
-        if(stopped) return;
-        if(rep < repTarget){ step(); }
-        else {
-          const next=idx+1;
-          if(next < nodes().length) playIndex(next); else stopPlayer();
-        }
-      }, ttsOK() ? 1600 : 200); // مهلة الترديد بعد الصوت
-    });
+      if(rep < repTarget){ step(); }
+      else {
+        const next=idx+1;
+        if(next < nodes().length) playIndex(next); else stopPlayer();
+      }
+    }, readDelay(text));
   }
   function startPlayer(fromEl){
     stopPlayer(); stopped=false;
@@ -86,7 +64,7 @@ window.Adhkar = (function(){
   }
   function stopPlayer(){
     stopped=true; if(timer){ clearTimeout(timer); timer=null; }
-    stopSpeak(); clearPlaying(); clearReps(); idx=-1; rep=0;
+    clearPlaying(); clearReps(); idx=-1; rep=0;
   }
 
   // ===== الصباح قبل العصر تقريبًا، والمساء بعده =====
